@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// STARTER — Score and win condition for the "Orb Collector" lab goal.
@@ -39,10 +40,8 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-#if ENABLE_LEGACY_INPUT_MANAGER
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
             Application.Quit(); // handy quit for testing the demo scene
-#endif
     }
 
     public void Collect()
