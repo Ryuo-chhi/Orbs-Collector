@@ -39,21 +39,26 @@ public class Orb : MonoBehaviour
         transform.Rotate(Vector3.up, spinSpeed * Time.deltaTime, Space.World);
     }
 
-    // ---------------------------------------------------------------
-    // TODO 4: Cycle the orb colour through the palette when clicked
-    // ---------------------------------------------------------------
     private void OnMouseDown()
     {
         // Click the orb's collider → cycle its color. Uses GetComponent<T>().
-        if (clickColors != null && clickColors.Length > 0)
+        clickIndex = (clickIndex + 1) % clickColors.Length;
+        GetComponent<Renderer>().material.color = clickColors[clickIndex];
+        Debug.Log($"[Orb] Clicked → {clickColors[clickIndex]}");
+    }
+
+    private void OnMouseDrag()
+    {
+        Camera mainCamera = UnityEngine.Camera.main;
+        if(mainCamera == null) return;
+
+        Plane dragPlane = new Plane(Vector3.up, new Vector3(0f, basePosition.y, 0f));
+
+        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+        if(dragPlane.Raycast(ray, out float distance))
         {
-            clickIndex = (clickIndex + 1) % clickColors.Length;
-            Renderer rend = GetComponent<Renderer>();
-            if (rend != null)
-            {
-                rend.material.color = clickColors[clickIndex];
-            }
-            Debug.Log($"[Orb] Clicked → {clickColors[clickIndex]}");
+            Vector3 hitPoint = ray.GetPoint(distance);
+            basePosition = new  Vector3(hitPoint.x, basePosition.y, hitPoint.z);
         }
     }
 

@@ -611,9 +611,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveSpeed: 6
-  orbPrefab: {fileID: 0}
+  orbPrefab: {fileID: 759977853982362468, guid: 896665e2f14d3bb4d894c1144f2cfbad, type: 3}
   cameraTransform: {fileID: 0}
-  cameraOffset: {x: 0, y: 12, z: -8}
 --- !u!54 &1205028436
 Rigidbody:
   m_ObjectHideFlags: 0

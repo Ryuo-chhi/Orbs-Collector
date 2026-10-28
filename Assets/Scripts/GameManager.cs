@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 /// <summary>
 /// STARTER — Score and win condition for the "Orb Collector" lab goal.
@@ -30,18 +29,14 @@ public class GameManager : MonoBehaviour
         // Simple singleton so the player can call GameManager.Instance.Collect().
         Instance = this;
 
-        // ---------------------------------------------------------------
-        // TODO 6: Replace the serialized totalOrbs with a live count
-        // ---------------------------------------------------------------
+        // TODO 6: replace the serialized totalOrbs with a live count:
         GameObject[] orbs = GameObject.FindGameObjectsWithTag("Orb");
         totalOrbs = orbs.Length;
-        Debug.Log($"[GameManager] Found {totalOrbs} orbs in scene.");
-    }
 
-    void Update()
-    {
-        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+#if ENABLE_LEGACY_INPUT_MANAGER
+        if (Input.GetKeyDown(KeyCode.Escape))
             Application.Quit(); // handy quit for testing the demo scene
+#endif
     }
 
     public void Collect()
@@ -55,14 +50,12 @@ public class GameManager : MonoBehaviour
         // Immediate-mode UI: runs several times per frame, so keep it cheap.
         GUI.Label(new Rect(12, 10, 400, 30), $"Orbs collected: {collected} / {totalOrbs}", new GUIStyle(GUI.skin.label) { fontSize = 20 });
 
-        // ---------------------------------------------------------------
-        // TODO 7: When collected >= totalOrbs, draw a large centered "YOU WIN!" banner
-        // ---------------------------------------------------------------
-        if (totalOrbs > 0 && collected >= totalOrbs)
+        // TODO 7: when collected >= totalOrbs, draw a large centered "YOU WIN!" label.
+        if(collected >= totalOrbs && totalOrbs > 0)
         {
             GUIStyle winStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 40,
+                fontSize = 50,
                 alignment = TextAnchor.MiddleCenter,
                 fontStyle = FontStyle.Bold
             };
@@ -74,6 +67,9 @@ public class GameManager : MonoBehaviour
             float yPos = (Screen.height - bannerHeight) * 0.5f;
 
             GUI.Label(new Rect(xPos, yPos, bannerWidth, bannerHeight), "YOU WIN!", winStyle);
+        } else
+        {
+            GUI.Label(new Rect(12, 10, 400, 30), $"Orbs collected: {collected} / {totalOrbs}", new GUIStyle(GUI.skin.label) { fontSize = 20 });
         }
     }
 }
