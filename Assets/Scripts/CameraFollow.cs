@@ -27,6 +27,36 @@ public class CameraFollow : MonoBehaviour
     [Header("Zoom (stretch)")]
     [SerializeField] private float minZoom = 6f;
     [SerializeField] private float maxZoom = 18f;
+    [SerializeField] private float zoomSpeed = 5f;
+
+    void Start()
+    {
+        // Auto-find player target if not assigned in Inspector
+        if (target == null)
+        {
+            GameObject player = GameObject.FindWithTag("Player");
+            if (player != null)
+            {
+                target = player.transform;
+            }
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // TODO 8 (stretch): Zoom with Input.GetAxis("Mouse ScrollWheel")
+    // ---------------------------------------------------------------
+    void Update()
+    {
+#if ENABLE_LEGACY_INPUT_MANAGER
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        if (Mathf.Abs(scroll) > 0.001f)
+        {
+            float currentDistance = offset.magnitude;
+            float newDistance = Mathf.Clamp(currentDistance - scroll * zoomSpeed, minZoom, maxZoom);
+            offset = offset.normalized * newDistance;
+        }
+#endif
+    }
 
     void LateUpdate()
     {

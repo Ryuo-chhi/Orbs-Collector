@@ -21,6 +21,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject orbPrefab;   // TODO 5: used to spawn a bonus orb
     [SerializeField] private Transform cameraTransform; // used by TODO 3 (camera follow)
 
+    [SerializeField] private Vector3 cameraOffset = new Vector3(0f, 12f, -8f);
+
     private Rigidbody rb;
 
     void Awake()
@@ -54,13 +56,50 @@ public class PlayerController : MonoBehaviour
     }
 
     // ---------------------------------------------------------------
-    // TODO 1 (OnCollisionEnter): log the name of any wall you bump.
-    // TODO 2 (OnTriggerEnter): if other.CompareTag("Orb"), Destroy the orb
-    //       and Debug.Log the collection. (Orb prefab already tagged "Orb".)
-    // TODO 3 (LateUpdate): move cameraTransform to
-    //       player position + offset so it follows you smoothly.
-    // TODO 4 (OnMouseDown is on the Orb script, not here — see Orb.cs.)
-    // TODO 5 (OnDestroy): when the Player is destroyed, Instantiate one
-    //       bonus orbPrefab at your last position.
+    // TODO 1: Log the name of any wall you bump
     // ---------------------------------------------------------------
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log($"[OnCollisionEnter] Bumped into: {collision.gameObject.name}");
+    }
+
+    // ---------------------------------------------------------------
+    // TODO 2: If other is tagged "Orb", destroy the orb and log pickup
+    // ---------------------------------------------------------------
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Orb"))
+        {
+            Debug.Log($"[PlayerController] Collected orb: {other.gameObject.name}");
+            Destroy(other.gameObject);
+
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.Collect();
+            }
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // TODO 3: Move cameraTransform to player position + offset
+    // ---------------------------------------------------------------
+    private void LateUpdate()
+    {
+        if (cameraTransform != null)
+        {
+            cameraTransform.position = transform.position + cameraOffset;
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // TODO 5: When the Player is destroyed, instantiate bonus orb at last position
+    // ---------------------------------------------------------------
+    private void OnDestroy()
+    {
+        if (orbPrefab != null)
+        {
+            Instantiate(orbPrefab, transform.position, Quaternion.identity);
+            Debug.Log("[PlayerController] Player destroyed. Spawned bonus orb at last position.");
+        }
+    }
 }

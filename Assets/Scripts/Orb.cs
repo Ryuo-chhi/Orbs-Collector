@@ -24,7 +24,6 @@ public class Orb : MonoBehaviour
     private Vector3 basePosition;
     private Vector3 baseScale;
     private int clickIndex;
-    private float hideTime = -1f;
 
     void Awake()
     {
@@ -40,12 +39,22 @@ public class Orb : MonoBehaviour
         transform.Rotate(Vector3.up, spinSpeed * Time.deltaTime, Space.World);
     }
 
+    // ---------------------------------------------------------------
+    // TODO 4: Cycle the orb colour through the palette when clicked
+    // ---------------------------------------------------------------
     private void OnMouseDown()
     {
         // Click the orb's collider → cycle its color. Uses GetComponent<T>().
-        clickIndex = (clickIndex + 1) % clickColors.Length;
-        GetComponent<Renderer>().material.color = clickColors[clickIndex];
-        Debug.Log($"[Orb] Clicked → {clickColors[clickIndex]}");
+        if (clickColors != null && clickColors.Length > 0)
+        {
+            clickIndex = (clickIndex + 1) % clickColors.Length;
+            Renderer rend = GetComponent<Renderer>();
+            if (rend != null)
+            {
+                rend.material.color = clickColors[clickIndex];
+            }
+            Debug.Log($"[Orb] Clicked → {clickColors[clickIndex]}");
+        }
     }
 
     // NOTE: The player script collects orbs in its OnTriggerEnter. This script
