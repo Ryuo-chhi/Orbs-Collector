@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 /// <summary>
 /// STARTER — A collectable orb for the "Orb Collector" lab goal.
@@ -37,6 +40,24 @@ public class Orb : MonoBehaviour
         float bob = Mathf.Sin(Time.time * 3f) * bobHeight;
         transform.position = basePosition + Vector3.up * bob;
         transform.Rotate(Vector3.up, spinSpeed * Time.deltaTime, Space.World);
+
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
+        // OnMouseDown is never sent when the project uses only the new Input
+        // System (Player Settings → Active Input Handling), so raycast manually.
+        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            Camera cam = Camera.main;
+            if (cam != null)
+            {
+                Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
+                if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ~0, QueryTriggerInteraction.Collide)
+                    && hit.collider.gameObject == gameObject)
+                {
+                    OnMouseDown();
+                }
+            }
+        }
+#endif
     }
 
     private void OnMouseDown()
